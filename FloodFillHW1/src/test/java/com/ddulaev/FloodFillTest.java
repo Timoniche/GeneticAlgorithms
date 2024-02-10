@@ -30,7 +30,11 @@ public class FloodFillTest {
         });
     }
 
-    public static List<List<Integer>> randomImage(int imageSize, int colorRange) {
+    public static List<List<Integer>> bigImage = randomImage(10000, 2);
+    public static List<Point> randomPoints = randomPoints(100);
+
+    @SuppressWarnings("SameParameterValue")
+    private static List<List<Integer>> randomImage(int imageSize, int colorRange) {
         Random random = new Random();
 
         List<List<Integer>> image = new ArrayList<>();
@@ -41,7 +45,20 @@ public class FloodFillTest {
             }
             image.add(row);
         }
+
         return image;
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private static List<Point> randomPoints(int nPoints) {
+        List<Point> points = new ArrayList<>();
+        Random random = new Random();
+
+        for (int i = 0; i < nPoints; i++) {
+            points.add(new Point(random.nextInt(bigImage.size()), random.nextInt(bigImage.size())));
+        }
+
+        return points;
     }
 
     @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
@@ -90,5 +107,14 @@ public class FloodFillTest {
         List<List<Integer>> answer = new ArrayList<>(Arrays.asList(row1, row2, row3, row4));
 
         assertEquals(floodFillImpl.getInnerCopy(), answer);
+    }
+
+    @Test
+    public void loadTestingBigImageMultiplePoints() {
+        floodFillImpl.reset(bigImage);
+
+        for (Point point : randomPoints) {
+            floodFillImpl.fill(point, 239);
+        }
     }
 }
