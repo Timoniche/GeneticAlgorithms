@@ -18,19 +18,24 @@ public class FloodFillTest {
     private final FloodFillBase floodFillImpl;
 
     public FloodFillTest(
+            String testName,
             FloodFillBase floodFillImpl
     ) {
         this.floodFillImpl = floodFillImpl;
     }
 
-    @Parameterized.Parameters
+    @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> floodFillImpls() {
         return Arrays.asList(new Object[][]{
-                {new FloodFillBFS(onePixelImage())}
+                {"BFS", new FloodFillBFS(onePixelImage())},
+                {"DFS Recursive", new FloodFillDFSRecursive(onePixelImage())},
+                {"DFS Iterative", new FloodFillDFSIterative(onePixelImage())},
         });
     }
 
-    public static List<List<Integer>> bigImage = randomImage(10000, 2);
+    private static final int BIG_IMAGE_SIZE = 1000;
+    public static List<List<Integer>> bigImage = randomImage(BIG_IMAGE_SIZE, 2);
+    public static List<List<Integer>> bigImageOneColor = randomImage(BIG_IMAGE_SIZE, 1);
     public static List<Point> randomPoints = randomPoints(100);
 
     @SuppressWarnings("SameParameterValue")
@@ -116,5 +121,12 @@ public class FloodFillTest {
         for (Point point : randomPoints) {
             floodFillImpl.fill(point, 239);
         }
+    }
+
+    @Test
+    public void testBigImageWithOneColor() {
+        floodFillImpl.reset(bigImageOneColor);
+        Point point = new Point(BIG_IMAGE_SIZE / 2, BIG_IMAGE_SIZE / 2);
+        floodFillImpl.fill(point, 239);
     }
 }

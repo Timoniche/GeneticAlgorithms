@@ -1,18 +1,17 @@
 package com.ddulaev;
 
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
-public class FloodFillBFS extends FloodFillBase {
-    private final Queue<Point> queue;
+public class FloodFillDFSIterative extends FloodFillBase {
+    private final Stack<Point> stack;
     private final Set<Point> visitedPoints;
 
-    public FloodFillBFS(List<List<Integer>> image) {
+    public FloodFillDFSIterative(List<List<Integer>> image) {
         super(image);
-        this.queue = new LinkedList<>();
+        stack = new Stack<>();
         visitedPoints = new HashSet<>();
     }
 
@@ -23,17 +22,19 @@ public class FloodFillBFS extends FloodFillBase {
 
         int startColor = super.image.get(startPosition.x()).get(startPosition.y());
 
-        queue.add(startPosition);
+        stack.push(startPosition);
         visitedPoints.add(startPosition);
-        while (!queue.isEmpty()) {
-            Point currentPoint = queue.poll();
+
+        while (!stack.empty()) {
+            Point currentPoint = stack.pop();
             image.get(currentPoint.x()).set(currentPoint.y(), newColor);
+
             for (int i = 0; i < 4; i++) {
                 Point nextPoint = new Point(currentPoint.x() + deltaX.get(i), currentPoint.y() + deltaY.get(i));
                 boolean wasVisited = visitedPoints.contains(nextPoint);
                 if (canWeMoveTo(nextPoint, startColor, wasVisited)) {
                     visitedPoints.add(nextPoint);
-                    queue.add(nextPoint);
+                    stack.add(nextPoint);
                 }
             }
         }
@@ -41,7 +42,7 @@ public class FloodFillBFS extends FloodFillBase {
 
     @Override
     public void clearState() {
-        queue.clear();
+        stack.clear();
         visitedPoints.clear();
     }
 }

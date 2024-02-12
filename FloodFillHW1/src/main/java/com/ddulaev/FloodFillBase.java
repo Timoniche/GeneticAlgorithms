@@ -5,6 +5,8 @@ import java.util.List;
 
 public abstract class FloodFillBase {
     protected List<List<Integer>> image;
+    protected final List<Integer> deltaX = List.of(1, -1, 0, 0);
+    protected final List<Integer> deltaY = List.of(0, 0, 1, -1);
 
     public FloodFillBase(List<List<Integer>> image) {
         this.image = createDefensiveCopy(image);
