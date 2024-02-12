@@ -12,15 +12,18 @@ import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(Parameterized.class)
 public class FloodFillTest {
+    private final String testName;
     private final FloodFillBase floodFillImpl;
 
     public FloodFillTest(
             String testName,
             FloodFillBase floodFillImpl
     ) {
+        this.testName = testName;
         this.floodFillImpl = floodFillImpl;
     }
 
@@ -125,8 +128,20 @@ public class FloodFillTest {
 
     @Test
     public void testBigImageWithOneColor() {
+        Runtime runtime = Runtime.getRuntime();
+        long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("TestName: [" + testName + "]");
+
         floodFillImpl.reset(bigImageOneColor);
         Point point = new Point(BIG_IMAGE_SIZE / 2, BIG_IMAGE_SIZE / 2);
-        floodFillImpl.fill(point, 239);
+        try {
+            floodFillImpl.fill(point, 239);
+        } catch (StackOverflowError err) {
+            fail();
+        }
+
+        long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
+        System.out.println("Memory increased (MB):" + (usedMemoryAfter - usedMemoryBefore) / 1e6);
+
     }
 }
