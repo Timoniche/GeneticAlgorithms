@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static lab2.MyAlg.GAUSSIAN_DEVIATION_COEF;
+import static lab2.MyAlg.GAUSSIAN_MUTATE_COEF;
 import static lab2.MyAlg.GENERATIONS;
+import static lab2.MyAlg.UNIFORM_MUTATE_COEF;
 import static lab2.MyFactory.MAX_X_DEFINITION;
 import static lab2.MyFactory.MIN_X_DEFINITION;
 import static lab2.MyFactory.generateDoubleBetween;
@@ -18,6 +21,10 @@ public class MyMutation implements EvolutionaryOperator<double[]> {
         this.generationNumber = generationNumber;
     }
 
+    public double getDecayCoefficient() {
+        return (generationNumber * 1.) / GENERATIONS;
+    }
+
     public List<double[]> apply(List<double[]> population, Random random) {
         // initial population
         // need to change individuals, but not their number!
@@ -25,13 +32,12 @@ public class MyMutation implements EvolutionaryOperator<double[]> {
         // your implementation:
 
         double prob = random.nextDouble();
-        double explorationDecayCoefficient = (generationNumber * 1.) / GENERATIONS;
-        double explorationThreshold = 1 - explorationDecayCoefficient;
+        double decay = getDecayCoefficient();
+        double explorationThreshold = 1 - decay * decay;
         if (prob <= explorationThreshold) {
             return uniformExplorationMutation(population, random);
         }
 
-        //result population
         return gaussianExploitationMutation(population, random);
     }
 
@@ -44,7 +50,7 @@ public class MyMutation implements EvolutionaryOperator<double[]> {
         for (double[] individual : population) {
             double[] newFeatures = individual.clone();
             for (int i = 0; i < individual.length; i++) {
-                if (random.nextDouble() <= 0.1 * 0.5 * (1. / individual.length)) {
+                if (random.nextDouble() <= UNIFORM_MUTATE_COEF * (1. / individual.length)) {
                     newFeatures[i] = generateDoubleBetween(MIN_X_DEFINITION, random, MAX_X_DEFINITION);
                 }
             }
@@ -62,14 +68,14 @@ public class MyMutation implements EvolutionaryOperator<double[]> {
         List<double[]> mutatedPopulation = new ArrayList<>();
 
         // https://en.wikipedia.org/wiki/Mutation_(genetic_algorithm)
-        double desiredStandardDeviation = (MAX_X_DEFINITION - MIN_X_DEFINITION) / 6;
+        double desiredStandardDeviation = GAUSSIAN_DEVIATION_COEF * (MAX_X_DEFINITION - MIN_X_DEFINITION) / 6;
         double desiredMean = 0.;
 
         for (double[] individual : population) {
             double[] newFeatures = individual.clone();
 
             for (int i = 0; i < individual.length; i++) {
-                if (random.nextDouble() <= 0.1 * 0.5 * (1. / individual.length)) {
+                if (random.nextDouble() <= GAUSSIAN_MUTATE_COEF * (1. / individual.length)) {
                     newFeatures[i] = newFeatures[i] + generateGaussian(desiredStandardDeviation, random, desiredMean);
                 }
             }

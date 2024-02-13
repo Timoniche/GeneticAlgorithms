@@ -11,15 +11,16 @@ import java.util.List;
 import java.util.Random;
 
 public class MyAlg {
-//    public static int DIMENSION = 100; //initial 2
-//    public static int POPULATION_SIZE = 10; //initial 10
-//    public static int GENERATIONS = 1000; //initial 10
+    public static boolean LOG_ENABLED = true;
+    public static int POPULATION_SIZE = 10;
 
     public static int DIMENSION = 100; //initial 2
-    public static int POPULATION_SIZE = 10; //initial 10
     public static int GENERATIONS = 10000; //initial 10
 
     public static double CROSSOVER_ALPHA_COEF = 0.3;
+    public static double UNIFORM_MUTATE_COEF = 0.05;
+    public static double GAUSSIAN_MUTATE_COEF = 0.1;
+    public static double GAUSSIAN_DEVIATION_COEF = 0.5;
 
     private static class RunBestFit {
         private double bestFit;
@@ -39,6 +40,11 @@ public class MyAlg {
         }
     }
     public static void main(String[] args) {
+        run10();
+//        bruteforce_parameters();
+    }
+
+    public static void run10() {
         List<Double> fits = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             RunBestFit runBestFit = new RunBestFit(0);
@@ -48,6 +54,57 @@ public class MyAlg {
         System.out.println("Fits from 10 runs");
         System.out.println(fits);
         System.out.println("Mean: " + mean(fits));
+    }
+
+    /**
+     * bruteforce for the load test:
+     *     public static int POPULATION_SIZE = 10;
+     *     public static int DIMENSION = 100;
+     *     public static int GENERATIONS = 10000;
+     */
+    public static void bruteforce_parameters() {
+        LOG_ENABLED = false;
+        long startTime = System.nanoTime();
+
+        List<Double> fits = new ArrayList<>();
+
+        double best_umc = 0.;
+        double best_gmc = 0.;
+        double best_gdc = 0.;
+        double bestfit = 0.;
+        for (double umc : new double[]{0.03, 0.04, 0.05, 0.06, 0.07}) {
+            for (double gmc : new double[]{0.1, 0.2, 0.3}) {
+                for (double gdc : new double[]{0.3}) {
+                    UNIFORM_MUTATE_COEF = umc;
+                    GAUSSIAN_MUTATE_COEF = gmc;
+                    GAUSSIAN_DEVIATION_COEF = gdc;
+                    int runs = 50;
+                    for (int i = 0; i < runs; i++) {
+                        RunBestFit runBestFit = new RunBestFit(0);
+                        run(runBestFit);
+                        fits.add(runBestFit.getBestFit());
+                    }
+                    double mean = mean(fits);
+                    if (mean > bestfit) {
+                        bestfit = mean;
+                        best_umc = umc;
+                        best_gmc = gmc;
+                        best_gdc = gdc;
+                    }
+                }
+            }
+        }
+        System.out.println("bestfit: " + bestfit);
+        System.out.println("UNIFORM_MUTATE_COEF: " + best_umc);
+        System.out.println("GAUSSIAN_MUTATE_COEF: " + best_gmc);
+        System.out.println("GAUSSIAN_DEVIATION_COEF: " + best_gdc);
+
+        long endTime = System.nanoTime();
+        long duration = (endTime - startTime) / 1000000;
+        System.out.println("Duration ms: " + duration);
+        System.out.println("Duration sec: " + duration / 1000);
+        System.out.println("Duration min: " + duration / (1000 * 60));
+        LOG_ENABLED = true;
     }
 
     public static double mean(List<Double> fits) {
@@ -87,9 +144,11 @@ public class MyAlg {
                 mutation.setGenerationNumber(populationData.getGenerationNumber() + 1);
                 runBestFit.updateBestFitIfNeeded(bestFit);
 
-                System.out.println("Generation " + populationData.getGenerationNumber() + ": " + bestFit);
-                System.out.println("\tBest solution = " + Arrays.toString((double[])populationData.getBestCandidate()));
-                System.out.println("\tPop size = " + populationData.getPopulationSize());
+                if (LOG_ENABLED) {
+                    System.out.println("Generation " + populationData.getGenerationNumber() + ": " + bestFit);
+                    System.out.println("\tBest solution = " + Arrays.toString((double[])populationData.getBestCandidate()));
+                    System.out.println("\tPop size = " + populationData.getPopulationSize());
+                }
             }
         });
 
