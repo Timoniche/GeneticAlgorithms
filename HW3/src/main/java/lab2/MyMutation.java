@@ -6,11 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static lab2.MyAlg.GENERATIONS;
 import static lab2.MyFactory.MAX_X_DEFINITION;
 import static lab2.MyFactory.MIN_X_DEFINITION;
 import static lab2.MyFactory.generateDoubleBetween;
 
 public class MyMutation implements EvolutionaryOperator<double[]> {
+    private int generationNumber;
+
+    public void setGenerationNumber(int generationNumber) {
+        this.generationNumber = generationNumber;
+    }
+
     public List<double[]> apply(List<double[]> population, Random random) {
         // initial population
         // need to change individuals, but not their number!
@@ -18,7 +25,8 @@ public class MyMutation implements EvolutionaryOperator<double[]> {
         // your implementation:
 
         double prob = random.nextDouble();
-        double explorationThreshold = 0.1;
+        double explorationDecayCoefficient = (generationNumber * 1.) / GENERATIONS;
+        double explorationThreshold = 1 - explorationDecayCoefficient;
         if (prob <= explorationThreshold) {
             return uniformExplorationMutation(population, random);
         }
@@ -35,9 +43,8 @@ public class MyMutation implements EvolutionaryOperator<double[]> {
 
         for (double[] individual : population) {
             double[] newFeatures = individual.clone();
-
             for (int i = 0; i < individual.length; i++) {
-                if (random.nextDouble() <= 1. / individual.length) {
+                if (random.nextDouble() <= 0.1 * 0.5 * (1. / individual.length)) {
                     newFeatures[i] = generateDoubleBetween(MIN_X_DEFINITION, random, MAX_X_DEFINITION);
                 }
             }
@@ -62,7 +69,7 @@ public class MyMutation implements EvolutionaryOperator<double[]> {
             double[] newFeatures = individual.clone();
 
             for (int i = 0; i < individual.length; i++) {
-                if (random.nextDouble() <= 1. / individual.length) {
+                if (random.nextDouble() <= 0.1 * 0.5 * (1. / individual.length)) {
                     newFeatures[i] = newFeatures[i] + generateGaussian(desiredStandardDeviation, random, desiredMean);
                 }
             }

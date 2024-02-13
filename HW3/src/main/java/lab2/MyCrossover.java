@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static lab2.MyAlg.CROSSOVER_ALPHA_COEF;
+
 public class MyCrossover extends AbstractCrossover<double[]> {
     protected MyCrossover() {
         super(1);
@@ -15,7 +17,7 @@ public class MyCrossover extends AbstractCrossover<double[]> {
         ArrayList<double[]> children = new ArrayList<>();
 
         // your implementation:
-        double alpha = 0.3;
+        double alpha = CROSSOVER_ALPHA_COEF;
         double[] child1 = arithmeticCrossover(p1, p2, alpha);
         double[] child2 = arithmeticCrossover(p2, p1, alpha);
         children.add(child1);
