@@ -17,6 +17,9 @@ public class TspAlg {
 
         List<Point> cities = tspReader.getCities();
         int dimension = tspReader.getDimension();
+        if (dimension == 1) {
+            throw new IllegalArgumentException("Cities count must be greater than 1");
+        }
         int populationSize = 10; // size of population
         int generations = 10; // number of generations
 
