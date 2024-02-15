@@ -18,6 +18,7 @@ public class TspAlg {
 
     private static class RunBestDistance {
         private double bestDistance;
+        private int bestIteration;
 
         public RunBestDistance(double bestDistance) {
             this.bestDistance = bestDistance;
@@ -27,9 +28,17 @@ public class TspAlg {
             return bestDistance;
         }
 
-        public void updateBestDistanceIfNeeded(double curDistance) {
+        public int getBestIteration() {
+            return bestIteration;
+        }
+
+        public void updateBestDistanceIfNeeded(
+                double curDistance,
+                int curIteration
+        ) {
             if (curDistance < bestDistance) {
                 bestDistance = curDistance;
+                bestIteration = curIteration;
             }
         }
     }
@@ -40,14 +49,25 @@ public class TspAlg {
 
     public static void run10() {
         List<Double> distances = new ArrayList<>();
+        List<Integer> iterations = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             RunBestDistance runBestDistance = new RunBestDistance(1e8);
             run(runBestDistance);
             distances.add(runBestDistance.getBestDistance());
+            iterations.add(runBestDistance.getBestIteration());
         }
         System.out.println("Fits from 10 runs");
         System.out.println(distances);
-        System.out.println("Mean: " + mean(distances));
+        System.out.println("Mean Distance: " + mean(distances));
+        System.out.println("Mean Iterations: " + meanIterations(iterations));
+    }
+
+    public static double meanIterations(List<Integer> iterations) {
+        double sum = 0;
+        for (int distance : iterations) {
+            sum += distance;
+        }
+        return sum / iterations.size();
     }
 
     public static double mean(List<Double> distances) {
@@ -94,7 +114,7 @@ public class TspAlg {
                 double bestFit = populationData.getBestCandidateFitness();
 
                 mutation.setGenerationNumber(populationData.getGenerationNumber() + 1);
-                runBestDistance.updateBestDistanceIfNeeded(bestFit);
+                runBestDistance.updateBestDistanceIfNeeded(bestFit, populationData.getGenerationNumber());
 
                 System.out.println("Generation " + populationData.getGenerationNumber() + ": " + bestFit);
                 TspSolution best = (TspSolution) populationData.getBestCandidate();
