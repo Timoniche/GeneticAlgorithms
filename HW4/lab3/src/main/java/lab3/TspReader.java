@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 public class TspReader {
@@ -19,7 +20,8 @@ public class TspReader {
         try (InputStream inputStream = problemURL.openStream()) {
             try (Scanner sc = new Scanner(inputStream)) {
                 dimension = sc.nextInt();
-                cities = new ArrayList<>(dimension);
+                //size is dimension + 1 cause first is dummy
+                cities = new ArrayList<>(Collections.nCopies(dimension + 1, new Point(0, 0)));
                 for (int i = 0; i < dimension; i++) {
                     int id = sc.nextInt();
                     int x = sc.nextInt();

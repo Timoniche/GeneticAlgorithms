@@ -25,6 +25,24 @@ public class TspSolution {
         return permutation;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        int verboseThreshold = 5;
+        sb.append('[');
+        for (int i = 0; i < Math.min(verboseThreshold, permutation.size()); i++) {
+            sb.append(permutation.get(i));
+            sb.append(' ');
+        }
+        if (permutation.size() > verboseThreshold) {
+            sb.append("... ");
+            sb.append(permutation.get(permutation.size() - 1));
+        }
+        sb.append(']');
+
+        return sb.toString();
+    }
+
     public static void main(String[] args) {
         TspSolution randomSolution = randomSolution(5);
         System.out.println(randomSolution.getPermutation());

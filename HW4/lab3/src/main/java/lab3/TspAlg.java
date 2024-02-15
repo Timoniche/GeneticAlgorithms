@@ -11,6 +11,9 @@ import java.util.Random;
 
 public class TspAlg {
 
+    public static int POPULATION_SIZE = 10; //initial 10
+    public static int GENERATIONS = 10000; //initial 10
+
     public static void main(String[] args) {
         String problem = "xqf131.tsp"; // name of problem or path to input file
         TspReader tspReader = new TspReader(problem);
@@ -20,8 +23,8 @@ public class TspAlg {
         if (dimension == 1) {
             throw new IllegalArgumentException("Cities count must be greater than 1");
         }
-        int populationSize = 10; // size of population
-        int generations = 10; // number of generations
+        int populationSize = POPULATION_SIZE; // size of population
+        int generations = GENERATIONS; // number of generations
 
         Random random = new Random(); // random
 
