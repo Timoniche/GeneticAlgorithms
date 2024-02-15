@@ -30,23 +30,27 @@ public class TspAlg {
 
         CandidateFactory<TspSolution> factory = new TspFactory(dimension); // generation of solutions
 
-        ArrayList<EvolutionaryOperator<TspSolution>> operators = new ArrayList<EvolutionaryOperator<TspSolution>>();
-        operators.add(new TspCrossover()); // Crossover
-        operators.add(new TspMutation()); // Mutation
-        EvolutionPipeline<TspSolution> pipeline = new EvolutionPipeline<TspSolution>(operators);
+        ArrayList<EvolutionaryOperator<TspSolution>> operators = new ArrayList<>();
+        TspMutation mutation = new TspMutation();
+        operators.add(new TspCrossover());
+        operators.add(mutation);
+        EvolutionPipeline<TspSolution> pipeline = new EvolutionPipeline<>(operators);
 
         SelectionStrategy<Object> selection = new RouletteWheelSelection(); // Selection operator
 
         FitnessEvaluator<TspSolution> evaluator = new TspFitnessFunction(cities); // Fitness function
 
-        EvolutionEngine<TspSolution> algorithm = new SteadyStateEvolutionEngine<TspSolution>(
+        EvolutionEngine<TspSolution> algorithm = new SteadyStateEvolutionEngine<>(
                 factory, pipeline, evaluator, selection, populationSize, false, random);
 
         algorithm.addEvolutionObserver(new EvolutionObserver() {
             public void populationUpdate(PopulationData populationData) {
                 double bestFit = populationData.getBestCandidateFitness();
+
+                mutation.setGenerationNumber(populationData.getGenerationNumber() + 1);
+
                 System.out.println("Generation " + populationData.getGenerationNumber() + ": " + bestFit);
-                TspSolution best = (TspSolution)populationData.getBestCandidate();
+                TspSolution best = (TspSolution) populationData.getBestCandidate();
                 System.out.println("\tBest solution = " + best.toString());
             }
         });
