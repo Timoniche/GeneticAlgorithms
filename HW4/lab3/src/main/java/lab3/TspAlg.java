@@ -1,8 +1,10 @@
 package lab3;
 
+import org.uncommons.maths.random.Probability;
 import org.uncommons.watchmaker.framework.*;
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
 import org.uncommons.watchmaker.framework.selection.RouletteWheelSelection;
+import org.uncommons.watchmaker.framework.selection.TournamentSelection;
 import org.uncommons.watchmaker.framework.termination.GenerationCount;
 
 import java.util.ArrayList;
@@ -10,6 +12,7 @@ import java.util.List;
 import java.util.Random;
 
 public class TspAlg {
+    public static double SCRAMBLE_THRESHOLD = 0.3;
 
     public static int POPULATION_SIZE = 10; //initial 10
     public static int GENERATIONS = 10000; //initial 10
@@ -36,7 +39,9 @@ public class TspAlg {
         operators.add(mutation);
         EvolutionPipeline<TspSolution> pipeline = new EvolutionPipeline<>(operators);
 
-        SelectionStrategy<Object> selection = new RouletteWheelSelection(); // Selection operator
+//        SelectionStrategy<Object> selection = new RouletteWheelSelection();
+        SelectionStrategy<Object> selection = new TournamentSelection(new Probability(0.98));
+
 
         FitnessEvaluator<TspSolution> evaluator = new TspFitnessFunction(cities); // Fitness function
 

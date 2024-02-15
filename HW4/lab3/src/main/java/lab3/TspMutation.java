@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import static lab3.TspAlg.GENERATIONS;
+import static lab3.TspAlg.SCRAMBLE_THRESHOLD;
 
 public class TspMutation implements EvolutionaryOperator<TspSolution> {
     private int generationNumber;
@@ -21,7 +22,8 @@ public class TspMutation implements EvolutionaryOperator<TspSolution> {
 
     private enum MutationStrategy {
         SWAP,
-        INVERSION
+        INVERSION,
+        SCRAMBLE,
     }
 
     public List<TspSolution> apply(List<TspSolution> population, Random random) {
@@ -38,6 +40,10 @@ public class TspMutation implements EvolutionaryOperator<TspSolution> {
         if (prob <= explorationThreshold) {
             return MutationStrategy.INVERSION;
         } else {
+            double scrambleThreshold = SCRAMBLE_THRESHOLD;
+            if (random.nextDouble() <= scrambleThreshold) {
+                return MutationStrategy.SCRAMBLE;
+            }
             return MutationStrategy.SWAP;
         }
     }
@@ -52,8 +58,13 @@ public class TspMutation implements EvolutionaryOperator<TspSolution> {
             switch (strategy) {
                 case SWAP:
                     swapMutation(tour, random);
+                    break;
                 case INVERSION:
                     inversionMutation(tour, random);
+                    break;
+                case SCRAMBLE:
+                    scrambleMutation(tour, random);
+                    break;
             }
         }
         return population;
@@ -88,5 +99,20 @@ public class TspMutation implements EvolutionaryOperator<TspSolution> {
         Point twoRandomAlleles = generateTwoRandomInts(dimension, random);
 
         Collections.swap(tour, twoRandomAlleles.getX(), twoRandomAlleles.getY());
+    }
+
+    private void scrambleMutation(List<Integer> tour, Random random) {
+        int dimension = tour.size();
+        Point twoRandomAlleles = generateTwoRandomInts(dimension, random);
+
+        int from = twoRandomAlleles.getX();
+        int toExclusive = twoRandomAlleles.getY() + 1;
+        if (from > toExclusive) {
+            int tmp = from;
+            from = toExclusive;
+            toExclusive = tmp;
+        }
+
+        Collections.shuffle(tour.subList(from, toExclusive), random);
     }
 }
