@@ -2,6 +2,8 @@ package lab3;
 
 import org.uncommons.watchmaker.framework.FitnessEvaluator;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class TspFitnessFunction implements FitnessEvaluator<TspSolution> {
@@ -39,5 +41,19 @@ public class TspFitnessFunction implements FitnessEvaluator<TspSolution> {
 
     public double getBestDistance() {
         return bestDistance;
+    }
+
+    public static void main(String[] args) {
+        List<Point> cities = new ArrayList<>();
+        cities.add(new Point(-1, -1)); //dummy
+        cities.add(new Point(1, 1));
+        cities.add(new Point(3, 3));
+        List<Integer> tour = new ArrayList<>();
+        tour.add(1);
+        tour.add(2);
+        TspSolution tspSolution = new TspSolution(tour);
+        double distance = new TspFitnessFunction(cities).getFitness(tspSolution, Collections.emptyList());
+        System.out.println(distance);
+        System.out.println(distance == 2 * 2 * Math.sqrt(2));
     }
 }

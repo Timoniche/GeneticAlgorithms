@@ -14,7 +14,7 @@ public class TspReader {
         ClassLoader classLoader = TspFitnessFunction.class.getClassLoader();
         URL problemURL = classLoader.getResource(problem);
         if (problemURL == null) {
-            throw new IllegalArgumentException("problem's name is incorrect'");
+            throw new IllegalArgumentException("problem's name is incorrect");
         }
         try (InputStream inputStream = problemURL.openStream()) {
             try (Scanner sc = new Scanner(inputStream)) {
