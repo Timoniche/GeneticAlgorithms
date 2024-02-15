@@ -79,7 +79,7 @@ public class TspAlg {
     }
 
     public static void run(RunBestDistance runBestDistance) {
-        String problem = "xqf131.tsp"; // name of problem or path to input file
+        String problem = "pka379.tsp"; // name of problem or path to input file
         TspReader tspReader = new TspReader(problem);
 
         List<Point> cities = tspReader.getCities();
