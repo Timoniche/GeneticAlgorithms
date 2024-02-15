@@ -15,17 +15,22 @@ public class TspMutation implements EvolutionaryOperator<TspSolution> {
         return population;
     }
 
-    private void swapMutation(List<Integer> tour, Random random) {
-        int sz = tour.size();
+    public static Point generateTwoRandomInts(int dimension, Random random) {
+        assert dimension > 1 : "Dimension must be greater than 1";
 
-        assert sz > 1 : "Dimension must be greater than 1";
-
-        int i = random.nextInt(sz);
+        int i = random.nextInt(dimension);
         int j;
         do {
-            j = random.nextInt(sz);
+            j = random.nextInt(dimension);
         } while (j == i);
 
-        Collections.swap(tour, i, j);
+        return new Point(i, j);
+    }
+
+    private void swapMutation(List<Integer> tour, Random random) {
+        int dimension = tour.size();
+        Point twoRandomAlleles = generateTwoRandomInts(dimension, random);
+
+        Collections.swap(tour, twoRandomAlleles.getX(), twoRandomAlleles.getY());
     }
 }
