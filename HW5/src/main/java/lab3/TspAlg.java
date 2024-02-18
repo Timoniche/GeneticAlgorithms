@@ -11,11 +11,9 @@ import java.util.List;
 import java.util.Random;
 
 public class TspAlg {
-    public static double SCRAMBLE_THRESHOLD = 0.3;
-
-    public static final int N = 5;
+    public static final int N = 1000;
     public static final int POPULATION_SIZE = 10; //initial 10
-    public static final int GENERATIONS = 100; //initial 10
+    public static final int GENERATIONS = 10000; //initial 10
 
     private static class RunBestDistance {
         private double bestDistance;
@@ -45,9 +43,9 @@ public class TspAlg {
     }
 
     public static void main(String[] args) {
-        RunBestDistance runBestDistance = new RunBestDistance(1e8);
-        run(runBestDistance);
-//        run10();
+//        RunBestDistance runBestDistance = new RunBestDistance(1e8);
+//        run(runBestDistance);
+        run10();
     }
 
     public static void run10() {
